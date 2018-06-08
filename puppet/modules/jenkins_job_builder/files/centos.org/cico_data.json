@@ -1,0 +1,1 @@
+{"message": "Requested servers successfully", "hosts": {"n36.pufty": {"comment": "4d4dc5e9", "hostname": "n36.pufty", "ip_address": "172.19.3.100", "centos_version": "7", "current_state": "Deployed", "chassis": "pufty", "architecture": "x86_64", "rel": null, "host_id": 100, "distro": null, "node_pool": 1, "used_count": 2075}}, "ssid": "4d4dc5e9"}
