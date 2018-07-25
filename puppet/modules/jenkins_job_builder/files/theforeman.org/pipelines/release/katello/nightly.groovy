@@ -43,23 +43,41 @@ pipeline {
 
             steps {
 
-              repoclosure('katello', 'el7')
+                repoclosure('katello', 'el7')
 
             }
         }
-        stage('Install Test') {
-            agent { label 'el' }
+        stage('Install tests and Upgrade tests') {
 
-            steps {
+            parallel {
+                stage('Install test') {
+                    agent { label 'el' }
+                    steps {
+                        git url: 'https://github.com/theforeman/foreman-infra'
 
-                git url: 'https://github.com/theforeman/foreman-infra'
+                        withCredentials([string(credentialsId: 'centos-jenkins', variable: 'PASSWORD')]) {
+                            runPlaybook(
+                                playbook: 'ci/centos.org/ansible/jenkins_job.yml',
+                                extraVars: ["jenkins_job_name=foreman-katello-nightly-test", "jenkins_username=foreman", "jenkins_password=${env.PASSWORD}"],
+                                options: ['-b']
+                            )
+                        }
+                    }
+                }
 
-                withCredentials([string(credentialsId: 'centos-jenkins', variable: 'PASSWORD')]) {
-                    runPlaybook(
-                        playbook: 'ci/centos.org/ansible/jenkins_job.yml',
-                        extraVars: ["jenkins_job_name=foreman-katello-nightly-test", "jenkins_username=foreman", "jenkins_password=${env.PASSWORD}"],
-                        options: ['-b']
-                    )
+                stage('Upgrade test') {
+                    agent { label 'el' }
+                    steps {
+                        git url: 'https://github.com/theforeman/foreman-infra'
+
+                        withCredentials([string(credentialsId: 'centos-jenkins', variable: 'PASSWORD')]) {
+                            runPlaybook(
+                                playbook: 'ci/centos.org/ansible/jenkins_job.yml',
+                                extraVars: ["jenkins_job_name=foreman-katello-upgrade-nightly-test", "jenkins_username=foreman", "jenkins_password=${env.PASSWORD}"],
+                                options: ['-b']
+                            )
+                        }
+                    }
                 }
             }
         }
