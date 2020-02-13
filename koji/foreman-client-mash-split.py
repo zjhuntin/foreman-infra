@@ -318,7 +318,7 @@ def main():
     else:
         git_tag = "rpm/{}".format(version)
 
-        if version in ('1.22', '1.23', '1.24'):
+        if version in ('1.23', '1.24', '2.0'):
             del dists['el8']
 
     for dist, code in dists.items():
